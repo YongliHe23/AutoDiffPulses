@@ -367,9 +367,9 @@ def arctanSGD(
     # enforce contiguousness of optimization variables, o.w. LBFGS may fail
     tρ, θ, tsl = tρ.contiguous(), θ.contiguous(), tsl.contiguous()
 
-    opt_rf = optim.SGD([tρ, θ], lr=0.1,momentum=0.9,nesterov=True)
+    opt_rf = optim.SGD([tρ, θ], lr=0.01,momentum=0.9,nesterov=True)
 
-    opt_sl = optim.SGD([tsl], lr=0.1,momentum=0.9,nesterov=True)
+    opt_sl = optim.SGD([tsl], lr=0.01,momentum=0.9,nesterov=True)
 
     tρ.requires_grad = θ.requires_grad = tsl.requires_grad = True
 
@@ -468,4 +468,4 @@ def arctanSGD(
     pulse.gr.detach_()
     optInfos = {'time_hist': time_hist, 'loss_hist': loss_hist,
                 'err_hist': err_hist, 'pen_hist': pen_hist}
-    return pulse, optInfoss
+    return pulse, optInfos
