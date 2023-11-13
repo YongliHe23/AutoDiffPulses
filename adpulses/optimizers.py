@@ -388,7 +388,7 @@ def arctanSGD(
         loss_err, loss_pen = fn_err(Mr_, Md_, w_=w_), fn_pen(pulse.rf)
         return loss_err, loss_pen
 
-    log_col = ('\n#iter\t ‖ elapsed time\t ‖ error\t ‖ penalty\t ‖'
+    log_col = ('\n#iter\t ‖ elapsed time\t ‖ SGDerror\t ‖ penalty\t ‖'
                ' total loss\t ‖ avg loss')
 
     def logger(i, t0, loss, err, pen):
