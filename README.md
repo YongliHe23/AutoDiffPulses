@@ -59,3 +59,5 @@ This work requries Python (`≥v3.5`), PyTorch (`≥v1.3`) with CUDA.
 
 Other Python dependencies include:\
 `scipy`, `numpy`, `PyTorch`.
+
+SGD branch: implement stochastic gradient descent (SGD) as optimizer
