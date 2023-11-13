@@ -44,7 +44,7 @@ arg = attrParser(arg, varargin);
 disp(['err_meth: ', arg.err_meth])
 
 [arg.err_meth, arg.pen_meth] = deal(lower(arg.err_meth), lower(arg.pen_meth));
-assert(ismember(arg.err_meth, {'null', 'l2', 'l2xy', 'ml2xy', 'l2z'}))
+assert(ismember(arg.err_meth, {'null', 'l2', 'l2xy', 'ml2xy', 'l2z','l2z_sgd'}))
 assert(ismember(arg.pen_meth, {'null', 'l2'}))
 
 [m2pName, p2mName] = deal([arg.fName, '_m2p.mat'], [arg.fName, '_p2m.mat']);

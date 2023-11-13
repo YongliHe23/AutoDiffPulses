@@ -52,7 +52,7 @@ if __name__ == "__main__":
 
     err_hash = {'null': metrics.err_null, 'l2': metrics.err_l2,
                 'l2xy': metrics.err_l2xy, 'ml2xy': metrics.err_ml2xy,
-                'l2z': metrics.err_l2z}
+                'l2z': metrics.err_l2z,'l2z_sgd':metrics.err_l2z_sgd}
     pen_hash = {'null': penalties.pen_null, 'l2': penalties.pen_l2}
 
     fn_err, fn_pen = err_hash[err_meth], pen_hash[pen_meth]

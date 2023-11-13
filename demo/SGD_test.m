@@ -80,7 +80,7 @@ target.weight = 0.2*ov + 1.0*iv;
 %% Design IVsat pulse 
 pADsat_ss_sgd = adpulses.opt.arctanAD_ss(target, cube, pIni, ... %'rasteroptim', ...
     'niter', 30, 'niter_rf', 2, 'niter_gr', 1, ...
-    'err_meth', 'l2z', 'doClean', false, 'gpuID', gpuID);
+    'err_meth', 'l2z_sgd', 'doClean', false, 'gpuID', gpuID);
 
 save pADsat_sgd pADsat_ss_sgd
 
