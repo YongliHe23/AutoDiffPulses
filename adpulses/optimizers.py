@@ -367,9 +367,9 @@ def arctanSGD(
     # enforce contiguousness of optimization variables, o.w. LBFGS may fail
     tρ, θ, tsl = tρ.contiguous(), θ.contiguous(), tsl.contiguous()
 
-    opt_rf = optim.SGD([tρ, θ], lr=0.1)
+    opt_rf = optim.Adam([tρ, θ])
 
-    opt_sl = optim.SGD([tsl], lr=0.1)
+    opt_sl = optim.Adam([tsl])
 
     tρ.requires_grad = θ.requires_grad = tsl.requires_grad = True
 

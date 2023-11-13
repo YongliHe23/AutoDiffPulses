@@ -26,7 +26,7 @@ end
 nt = size(g,2);
 
 %rf = single(0.00*ones(1,nt)); % initialize with zeros
-rf=0.25*rand(1,nt);
+rf=rand(1,nt);
 pIni = mrphy.Pulse('rf', rf, 'gr', g, 'dt', dt*1e-3, ...
     'gmax', 5.0, 'smax', smax, 'rfmax', 0.25, 'desc', '3d spiral');
 
@@ -79,10 +79,10 @@ target.weight = 0.2*ov + 1.0*iv;
 
 %% Design IVsat pulse 
 pADsat_ss = adpulses.opt.arctanAD_ss(target, cube, pIni, ... %'rasteroptim', ...
-    'niter', 10, 'niter_rf', 2, 'niter_gr', 1, ...
+    'niter', 30, 'niter_rf', 2, 'niter_gr', 1, ...
     'err_meth', 'l2z', 'doClean', false, 'gpuID', gpuID);
 
-%save pADsat_60by60 pADsat
+save pADsat_bfgs pADsat_ss
 
 % mz = plot_res(pIni, pADsat, cubesim, target, 'z', false);
 % 
