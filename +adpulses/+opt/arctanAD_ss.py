@@ -61,8 +61,10 @@ if __name__ == "__main__":
     kw = {k: arg[k] for k in ('b1Map_', 'niter', 'niter_gr', 'niter_rf',
                               'doRelax')}
 
-    pulse, optInfos = optimizers.arctanLBFGS_ss(target, cube, pulse,
-                                             fn_err, fn_pen, eta=eta, **kw) #steady state optim
+#    pulse, optInfos = optimizers.arctanLBFGS_ss(target, cube, pulse,
+#                                             fn_err, fn_pen, eta=eta, **kw) #steady state optim
+    pulse, optInfos = optimizers.arctanSGD(target, cube, pulse,
+                                              fn_err, fn_pen, eta=eta, **kw) #SGD Steady-State optim
 
     # %% saving
     io.p2m(p2mName, pulse, {'optInfos': optInfos})
