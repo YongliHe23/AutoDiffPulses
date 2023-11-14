@@ -2,8 +2,9 @@ curdir = pwd; cd /home/jfnielse/github/mirt/; setup; cd(curdir);
 %addpath ~/github/tianrluo/AutoDiffPulses/
 %addpath /home/jfnielse/github/jfnielsen/AutoDiffPulses/   % my fork, for adding new costs
 %addpath ~/Downloads/AutoDiffPulses-master
-setup_AutoDiffPulses;            % AutoDiff setup
+%setup_AutoDiffPulses;            % AutoDiff setup
 %addpath /home/jfnielse/github/tianrluo/       % +mrphy and +attr
+addpath /home/yonglihe/Downloads/AutoDiffPulses-master/demo/rfdesign
 
 gpuID = 2;  % View current GPU usage with `nvtop`  
 
@@ -26,7 +27,7 @@ end
 nt = size(g,2);
 
 %rf = single(0.00*ones(1,nt)); % initialize with zeros
-rf=0.25*rand(1,nt);
+rf=rand(1,nt);
 pIni = mrphy.Pulse('rf', rf, 'gr', g, 'dt', dt*1e-3, ...
     'gmax', 5.0, 'smax', smax, 'rfmax', 0.25, 'desc', '3d spiral');
 
@@ -82,7 +83,7 @@ pADsat_ss = adpulses.opt.arctanAD_ss(target, cube, pIni, ... %'rasteroptim', ...
     'niter', 10, 'niter_rf', 2, 'niter_gr', 1, ...
     'err_meth', 'l2z', 'doClean', false, 'gpuID', gpuID);
 
-%save pADsat_60by60 pADsat
+save pADsat_bfgs pADsat_ss
 
 % mz = plot_res(pIni, pADsat, cubesim, target, 'z', false);
 % 
