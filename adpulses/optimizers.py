@@ -388,10 +388,10 @@ def arctanSGD(
     Md_, w_ = target['d_'], target['weight_'].sqrt()  # (1, nM, xy), (1, nM)
     nM = w_.numel()
 
-    def fn_loss(cube, pulse):
+    def fn_loss(cube, pulse,batch_if:Optional[int]=1,seed:Optional[int]=10):
         """mini-batch loss"""
         Mr_ = cube.applypulse_ss(pulse, b1Map_=b1Map_, doRelax=doRelax)
-        loss_err, loss_pen = fn_err(Mr_, Md_, w_=w_), fn_pen(pulse.rf)
+        loss_err, loss_pen = fn_err(Mr_, Md_,batch_if=batch_if,seed=seed, w_=w_), fn_pen(pulse.rf)
         return loss_err, loss_pen
 
     def fn_loss_whole(cube, pulse):
@@ -428,21 +428,21 @@ def arctanSGD(
 
         log_ind = 0
 
-        def closure(k):
+        def closure():
             opt_rf.zero_grad()
             opt_sl.zero_grad()
 
             pulse.rf = mrphy.utils.tρθ2rf(tρ, θ, rfmax)
             pulse.gr = mrphy.utils.s2g(mrphy.utils.ts2s(tsl, smax), pulse.dt)
 
-            loss_err, loss_pen = fn_loss(cube, pulse,k)
+            loss_err, loss_pen = fn_loss(cube, pulse,seed=10+i)
             loss = loss_err + eta*loss_pen
             loss.backward()
             return loss
 
         print('rf-loop: ', niter_rf)
         for _ in range(niter_rf):
-            opt_rf.step(closure(i+1))
+            opt_rf.step(closure)
 
             loss_err, loss_pen = fn_loss_whole(cube, pulse)
             loss = loss_err + eta*loss_pen
@@ -458,7 +458,7 @@ def arctanSGD(
 
         print('gr-loop: ', niter_gr)
         for _ in range(niter_gr):
-            opt_sl.step(closure(i+1))
+            opt_sl.step(closure)
 
             loss_err, loss_pen = fn_loss_whole(cube, pulse)
             loss = loss_err + eta*loss_pen
