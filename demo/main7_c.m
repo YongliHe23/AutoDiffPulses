@@ -27,6 +27,7 @@ end
 nt = size(g,2);
 
 %rf = single(0.00*ones(1,nt)); % initialize with zeros
+rng(10);%reproducibility
 rf=rand(1,nt);
 pIni = mrphy.Pulse('rf', rf, 'gr', g, 'dt', dt*1e-3, ...
     'gmax', 5.0, 'smax', smax, 'rfmax', 0.25, 'desc', '3d spiral');
