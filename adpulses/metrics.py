@@ -62,7 +62,8 @@ def err_l2z_sgd(Mr_: Tensor, Md_: Tensor, w_: Optional[Tensor] = None) -> Tensor
     batchsize=1000
 
     sample_idx=torch.randperm(Me_.numel(),generator=torch.random.manual_seed(10))[:batchsize]
-
+    #sample_idx=torch.randperm(Me_.numel())[:batchsize]
+ 
     sample_mask.view(-1)[sample_idx]=True
 
     err = (Me_*sample_mask if w_ is None else Me_*sample_mask*w_).norm()**2
