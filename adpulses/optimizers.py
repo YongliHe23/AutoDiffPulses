@@ -428,21 +428,21 @@ def arctanSGD(
 
         log_ind = 0
 
-        def closure():
+        def closure(k):
             opt_rf.zero_grad()
             opt_sl.zero_grad()
 
             pulse.rf = mrphy.utils.tρθ2rf(tρ, θ, rfmax)
             pulse.gr = mrphy.utils.s2g(mrphy.utils.ts2s(tsl, smax), pulse.dt)
 
-            loss_err, loss_pen = fn_loss(cube, pulse)
+            loss_err, loss_pen = fn_loss(cube, pulse,k)
             loss = loss_err + eta*loss_pen
             loss.backward()
             return loss
 
         print('rf-loop: ', niter_rf)
         for _ in range(niter_rf):
-            opt_rf.step(closure)
+            opt_rf.step(closure(i+1))
 
             loss_err, loss_pen = fn_loss_whole(cube, pulse)
             loss = loss_err + eta*loss_pen
@@ -458,7 +458,7 @@ def arctanSGD(
 
         print('gr-loop: ', niter_gr)
         for _ in range(niter_gr):
-            opt_sl.step(closure)
+            opt_sl.step(closure(i+1))
 
             loss_err, loss_pen = fn_loss_whole(cube, pulse)
             loss = loss_err + eta*loss_pen
