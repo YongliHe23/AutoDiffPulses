@@ -19,6 +19,10 @@ function [pulse_o, optInfos] = arctanAD_ss(target, cube, pulse_i, varargin)
 %   'l2xy': ordinary transversal least square excitation error metric;
 %   'ml2xy': transversal magnitude least square excitation error metric;
 %   'l2z': longitudinal least square.
+%  *'l2z_sgd':minibatch l2z error, use this only when err_meth_whole is also specified
+% - err_meth_whole str: whole batch error method:
+%   'l2z': longitudinal least square
+%   ...(to be added)
 % - pen_meth str:
 %   'null': no regularization.
 %   'l2': least square, RF power regularizer.
@@ -35,13 +39,14 @@ import attr.*
 arg.b1Map = [];
 [arg.niter, arg.niter_gr, arg.niter_rf] = deal(8, 2, 2);
 arg.err_meth = 'l2xy';
+arg.err_meth_whole=arg.err_meth;%whole batch error
 [arg.pen_meth, arg.eta] = deal('l2', 4);
 arg.gpuID = 0;
 [arg.doRelax, arg.doClean] = deal(true, true);
 arg.fName = 'adpulses_opt_arctanAD';
 
 arg = attrParser(arg, varargin);
-disp(['err_meth: ', arg.err_meth])
+disp(['err_meth: ', arg.err_meth,'err_meth_whole',arg.err_meth_whole])
 
 [arg.err_meth, arg.pen_meth] = deal(lower(arg.err_meth), lower(arg.pen_meth));
 assert(ismember(arg.err_meth, {'null', 'l2', 'l2xy', 'ml2xy', 'l2z','l2z_sgd'}))

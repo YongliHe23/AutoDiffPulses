@@ -1,4 +1,6 @@
-# arctan.py
+# arctan_ss.py
+#SGD version
+#modified by Yongli He at Nov.14,2023
 
 import numpy as np
 import torch
@@ -48,6 +50,7 @@ if __name__ == "__main__":
     print('eta: ', eta)
 
     err_meth = dflt_arg('err_meth', 'l2xy', lambda k: arg[k].item())
+    err_meth_whole=dflt_arg('err_meth_whole',err_meth,lambda k: arg[k].item())#whole batch error method,dflt=minibatch err method
     pen_meth = dflt_arg('pen_meth', 'l2', lambda k: arg[k].item())
 
     err_hash = {'null': metrics.err_null, 'l2': metrics.err_l2,
@@ -55,7 +58,7 @@ if __name__ == "__main__":
                 'l2z': metrics.err_l2z,'l2z_sgd':metrics.err_l2z_sgd}
     pen_hash = {'null': penalties.pen_null, 'l2': penalties.pen_l2}
 
-    fn_err, fn_pen = err_hash[err_meth], pen_hash[pen_meth]
+    fn_err,fn_err_whole, fn_pen = err_hash[err_meth],err_hash[err_meth_whole], pen_hash[pen_meth]
 
     # %% pulse design
     kw = {k: arg[k] for k in ('b1Map_', 'niter', 'niter_gr', 'niter_rf',
@@ -64,7 +67,7 @@ if __name__ == "__main__":
 #    pulse, optInfos = optimizers.arctanLBFGS_ss(target, cube, pulse,
 #                                             fn_err, fn_pen, eta=eta, **kw) #steady state optim
     pulse, optInfos = optimizers.arctanSGD(target, cube, pulse,
-                                              fn_err, fn_pen, eta=eta, **kw) #SGD Steady-State optim
+                                              fn_err,fn_err_whole, fn_pen, eta=eta, **kw) #SGD Steady-State optim
 
     # %% saving
     io.p2m(p2mName, pulse, {'optInfos': optInfos})

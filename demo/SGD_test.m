@@ -1,4 +1,5 @@
 curdir = pwd; cd /home/jfnielse/github/mirt/; setup; cd(curdir);
+addpath /home/yonglihe/Downloads/AutoDiffPulses-master/demo/rfdesign
 %addpath ~/github/tianrluo/AutoDiffPulses/
 %addpath /home/jfnielse/github/jfnielsen/AutoDiffPulses/   % my fork, for adding new costs
 %addpath ~/Downloads/AutoDiffPulses-master
@@ -79,8 +80,8 @@ target.weight = 0.2*ov + 1.0*iv;
 
 %% Design IVsat pulse 
 pADsat_ss_sgd = adpulses.opt.arctanAD_ss(target, cube, pIni, ... %'rasteroptim', ...
-    'niter', 30, 'niter_rf', 2, 'niter_gr', 1, ...
-    'err_meth', 'l2z_sgd', 'doClean', false, 'gpuID', gpuID);
+    'niter', 10, 'niter_rf', 2, 'niter_gr', 1, ...
+    'err_meth', 'l2z_sgd','err_meth_whole','l2z', 'doClean', false, 'gpuID', gpuID);
 
 save pADsat_sgd pADsat_ss_sgd
 

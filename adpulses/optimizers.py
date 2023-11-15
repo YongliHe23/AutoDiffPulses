@@ -322,6 +322,7 @@ def arctanLBFGS_ss(
 def arctanSGD(
     target: dict, cube: SpinCube, pulse: Pulse,
     fn_err: Callable[[Tensor, Tensor, Optional[Tensor]], Tensor],
+    fn_err_whole: Callable,
     fn_pen: Callable[[Tensor], Tensor],
     niter: int = 8, niter_gr: int = 2, niter_rf: int = 2,
     eta: Number = 4.,
@@ -388,9 +389,18 @@ def arctanSGD(
     nM = w_.numel()
 
     def fn_loss(cube, pulse):
+        """mini-batch loss"""
         Mr_ = cube.applypulse_ss(pulse, b1Map_=b1Map_, doRelax=doRelax)
         loss_err, loss_pen = fn_err(Mr_, Md_, w_=w_), fn_pen(pulse.rf)
         return loss_err, loss_pen
+
+    def fn_loss_whole(cube, pulse):
+        """whole batch loss"""
+        Mr_ = cube.applypulse_ss(pulse, b1Map_=b1Map_, doRelax=doRelax)
+        loss_err, loss_pen = fn_err_whole(Mr_, Md_, w_=w_), fn_pen(pulse.rf)
+        return loss_err, loss_pen
+
+
 
     log_col = ('\n#iter\t ‖ elapsed time\t ‖ SGDerror\t ‖ penalty\t ‖'
                ' total loss\t ‖ avg loss')
@@ -402,7 +412,7 @@ def arctanSGD(
         print(msg)
         return loss
 
-    loss_err, loss_pen = fn_loss(cube, pulse)
+    loss_err, loss_pen = fn_loss_whole(cube, pulse)
     loss = loss_err + eta*loss_pen
 
     logger(0, time(), loss, loss_err, loss_pen)
@@ -434,7 +444,7 @@ def arctanSGD(
         for _ in range(niter_rf):
             opt_rf.step(closure)
 
-            loss_err, loss_pen = fn_loss(cube, pulse)
+            loss_err, loss_pen = fn_loss_whole(cube, pulse)
             loss = loss_err + eta*loss_pen
 
             if not doQuiet:
@@ -450,7 +460,7 @@ def arctanSGD(
         for _ in range(niter_gr):
             opt_sl.step(closure)
 
-            loss_err, loss_pen = fn_loss(cube, pulse)
+            loss_err, loss_pen = fn_loss_whole(cube, pulse)
             loss = loss_err + eta*loss_pen
 
             if not doQuiet:
