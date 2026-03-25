@@ -1,8 +1,10 @@
-from typing import Tuple, Callable, Optional
+from typing import Tuple, Callable, Optional, Union
 from time import time
 from numbers import Number
+from pathlib import Path
 
 import numpy as np
+import torch
 from torch import optim, Tensor
 import mrphy
 from mrphy.mobjs import SpinCube, Pulse
@@ -15,7 +17,11 @@ def arctanLBFGS(
     niter: int = 8, niter_gr: int = 2, niter_rf: int = 2,
     eta: Number = 4.,
     b1Map_: Optional[Tensor] = None, b1Map: Optional[Tensor] = None,
-    doQuiet: bool = False, doRelax: bool = True
+    doQuiet: bool = False, doRelax: bool = True,
+    pulse_save_period: Optional[int] = None,
+    pulse_checkpoint_root: Optional[Union[str, Path]] = None,
+    excitation_save_period: Optional[int] = None,
+    excitation_checkpoint_root: Optional[Union[str, Path]] = None,
 ) -> Tuple[Pulse, dict]:
     r"""Joint RF/GR optimization via direct arctan trick
 
@@ -37,10 +43,20 @@ def arctanLBFGS(
         - ``eta``: `(1,)`, penalization term weighting coefficient.
         - ``b1Map_``: `(1, nM, xy,(nCoils))`, a.u., transmit sensitivity.
         - ``doRelax``: [T/f], whether accounting relaxation effects in simu.
+        - ``pulse_save_period``: int, save pulse every this many outer iters.
+        - ``pulse_checkpoint_root``: str or Path, directory for pulse saves.
+        - ``excitation_save_period``: int, save Mr_ every this many outer iters.
+        - ``excitation_checkpoint_root``: str or Path, directory for Mr_ saves.
     Outputs:
         - ``pulse``: mrphy.mojbs.Pulse, optimized pulse.
         - ``optInfos``: dict, optimization informations.
     """
+    if pulse_save_period is not None:
+        pulse_checkpoint_root = Path(pulse_checkpoint_root)
+        pulse_checkpoint_root.mkdir(parents=True, exist_ok=True)
+    if excitation_save_period is not None:
+        excitation_checkpoint_root = Path(excitation_checkpoint_root)
+        excitation_checkpoint_root.mkdir(parents=True, exist_ok=True)
     rfmax, smax = pulse.rfmax, pulse.smax
     eta *= pulse.dt*1e6/4  # normalize eta by dt
     assert ((b1Map_ is None) or (b1Map is None))
@@ -150,6 +166,20 @@ def arctanLBFGS(
                 time()-t0, loss.item(), loss_err.item(), loss_pen.item())
 
             log_ind += 1
+
+        iter_num = i + 1
+        if (pulse_save_period is not None
+                and iter_num % pulse_save_period == 0):
+            fname = pulse_checkpoint_root / f'pulse_iter{iter_num:04d}.pt'
+            torch.save(pulse, fname)
+
+        if (excitation_save_period is not None
+                and iter_num % excitation_save_period == 0):
+            with torch.no_grad():
+                Mr_ = cube.applypulse(pulse, b1Map_=b1Map_, doRelax=doRelax)
+            fname = (excitation_checkpoint_root
+                     / f'excitation_iter{iter_num:04d}.pt')
+            torch.save(Mr_.detach().cpu(), fname)
 
     print('\n== Results: ==')
     print(log_col)
