@@ -18,6 +18,11 @@ def arctanLBFGS(
     eta: Number = 4.,
     b1Map_: Optional[Tensor] = None, b1Map: Optional[Tensor] = None,
     doQuiet: bool = False, doRelax: bool = True,
+    sequence_type: str = 'regular',
+    TR: Optional[float] = None,
+    vTR: Optional[float] = None,
+    alpha: Optional[float] = None,
+    alphaDur: Optional[float] = None,
     pulse_save_period: Optional[int] = None,
     pulse_checkpoint_root: Optional[Union[str, Path]] = None,
     excitation_save_period: Optional[int] = None,
@@ -43,6 +48,15 @@ def arctanLBFGS(
         - ``eta``: `(1,)`, penalization term weighting coefficient.
         - ``b1Map_``: `(1, nM, xy,(nCoils))`, a.u., transmit sensitivity.
         - ``doRelax``: [T/f], whether accounting relaxation effects in simu.
+        - ``sequence_type``: str, one of 'regular' (default), 'ss', 'sms';
+          case-insensitive.
+        - ``TR``: float, repetition time (s). Required for 'ss'/'sms';
+          defaults to 55e-3 if None.
+        - ``vTR``: float, volume TR (s) for SMS EPI. Defaults to 55e-2 if None.
+        - ``alpha``: float, flip angle (deg) for tip-down pulse in 'ss'/'sms'.
+          Defaults to 15 if None.
+        - ``alphaDur``: float, duration (s) of alpha pulse for 'sms'.
+          Defaults to 8e-3 if None.
         - ``pulse_save_period``: int, save pulse every this many outer iters.
         - ``pulse_checkpoint_root``: str or Path, directory for pulse saves.
         - ``excitation_save_period``: int, save Mr_ every this many outer iters.
@@ -51,6 +65,24 @@ def arctanLBFGS(
         - ``pulse``: mrphy.mojbs.Pulse, optimized pulse.
         - ``optInfos``: dict, optimization informations.
     """
+    sequence_type = sequence_type.lower()
+    assert sequence_type in ('regular', 'ss', 'sms'), (
+        f"sequence_type must be 'regular', 'ss', or 'sms', got '{sequence_type}'")
+    if sequence_type == 'ss':
+        if TR is None:
+            TR = 55e-3
+        if alpha is None:
+            alpha = 15.
+    elif sequence_type == 'sms':
+        if TR is None:
+            TR = 55e-3
+        if vTR is None:
+            vTR = 55e-2
+        if alpha is None:
+            alpha = 15.
+        if alphaDur is None:
+            alphaDur = 8e-3
+
     if pulse_save_period is not None:
         pulse_checkpoint_root = Path(pulse_checkpoint_root)
         pulse_checkpoint_root.mkdir(parents=True, exist_ok=True)
@@ -93,7 +125,15 @@ def arctanLBFGS(
     nM = w_.numel()
 
     def fn_loss(cube, pulse):
-        Mr_ = cube.applypulse(pulse, b1Map_=b1Map_, doRelax=doRelax)
+        if sequence_type == 'sms':
+            Mr_ = cube.applypulse_ss_sms(pulse, b1Map_=b1Map_, doRelax=doRelax,
+                                         TR=TR, vTR=vTR, alpha=alpha,
+                                         alphaDur=alphaDur)
+        elif sequence_type == 'ss':
+            Mr_ = cube.applypulse_ss(pulse, b1Map_=b1Map_, doRelax=doRelax,
+                                     TR=TR, alpha=alpha)
+        else:
+            Mr_ = cube.applypulse(pulse, b1Map_=b1Map_, doRelax=doRelax)
         loss_err, loss_pen = fn_err(Mr_, Md_, w_=w_), fn_pen(pulse.rf)
         return loss_err, loss_pen
 
