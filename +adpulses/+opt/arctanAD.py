@@ -57,9 +57,33 @@ if __name__ == "__main__":
 
     fn_err, fn_pen = err_hash[err_meth], pen_hash[pen_meth]
 
+    sequence_type = dflt_arg('sequence_type', 'regular', lambda k: arg[k].item())
+    TR = dflt_arg('TR', None, lambda k: float(arg[k].item()))
+    vTR = dflt_arg('vTR', None, lambda k: float(arg[k].item()))
+    alpha = dflt_arg('alpha', None, lambda k: float(arg[k].item()))
+    alphaDur = dflt_arg('alphaDur', None, lambda k: float(arg[k].item()))
+    doQuiet = dflt_arg('doQuiet', False, lambda k: bool(arg[k].item()))
+    pulse_save_period = dflt_arg('pulse_save_period', None,
+                                 lambda k: int(arg[k].item()))
+    pulse_checkpoint_root = dflt_arg('pulse_checkpoint_root', None,
+                                     lambda k: arg[k].item())
+    excitation_save_period = dflt_arg('excitation_save_period', None,
+                                      lambda k: int(arg[k].item()))
+    excitation_checkpoint_root = dflt_arg('excitation_checkpoint_root', None,
+                                          lambda k: arg[k].item())
+
     # %% pulse design
     kw = {k: arg[k] for k in ('b1Map_', 'niter', 'niter_gr', 'niter_rf',
                               'doRelax')}
+    kw.update({
+        'sequence_type': sequence_type,
+        'TR': TR, 'vTR': vTR, 'alpha': alpha, 'alphaDur': alphaDur,
+        'doQuiet': doQuiet,
+        'pulse_save_period': pulse_save_period,
+        'pulse_checkpoint_root': pulse_checkpoint_root,
+        'excitation_save_period': excitation_save_period,
+        'excitation_checkpoint_root': excitation_checkpoint_root,
+    })
 
     pulse, optInfos = optimizers.arctanLBFGS(target, cube, pulse,
                                              fn_err, fn_pen, eta=eta, **kw)
