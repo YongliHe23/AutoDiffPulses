@@ -79,7 +79,8 @@ save(m2pName, '-v7', 'target', 'cube_st', 'pulse_st', 'arg')
 [p, ~, ~] = fileparts(mfilename('fullpath')); % .m/.py must be in the same path.
 pyfile = [p, '/arctanAD.py'];
 
-cmd = ['python ', pyfile, ' ', m2pName, ' ', p2mName, ' ', num2str(gpuID)];
+pyExec = char(pyenv().Executable);
+cmd = [pyExec, ' ', pyfile, ' ', m2pName, ' ', p2mName, ' ', num2str(gpuID)];
 Err = system(cmd);  % python call
 if Err, error('python call failed!!!'); end
 

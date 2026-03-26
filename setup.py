@@ -27,10 +27,10 @@ with open("README.md", "r") as h:
 
 setup(
     name="adpulses",
-    version="0.2.2",
-    author="Tianrui Luo",
-    author_email="tianrluo@umich.edu",
-    description="A Pytorch based tool for MR pulse design",
+    version="0.3.0",
+    author="Tianrui Luo, Yongli He",
+    author_email="tianrluo@umich.edu, yonglihe@umich.edu",
+    description="A Pytorch based tool for MR pulse design, with support for steady-state and SMS sequence optimization",
     license='MIT',
     long_description=long_description,
     long_description_content_type="text/x-rst",
