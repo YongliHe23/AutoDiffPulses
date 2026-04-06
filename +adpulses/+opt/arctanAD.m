@@ -27,11 +27,9 @@ function [pulse_o, optInfos] = arctanAD(target, cube, pulse_i, varargin)
 % - gpuID (1,) which GPU to run the pulse design. If `-1`, use CPU.
 % - doRelax[T/f], allow spins to relax during simulation.
 % - doQuiet [T/f], suppress per-step optimizer log output.
-% - sequence_type str, dflt 'regular'; one of 'regular', 'ss', 'sms'.
-% - TR (1,) s, repetition time. Required for 'ss'/'sms'; dflt 55e-3 if [].
-% - vTR (1,) s, volume TR for SMS EPI. Dflt 55e-2 if [].
-% - alpha (1,) deg, flip angle of tip-down pulse for 'ss'/'sms'. Dflt 15 if [].
-% - alphaDur (1,) s, duration of alpha pulse for 'sms'. Dflt 8e-3 if [].
+% - sequence_type str, dflt 'regular'; one of 'regular', 'ss'.
+% - TR (1,) s, repetition time. Required for 'ss'; dflt 55e-3 if [].
+% - alpha (1,) deg, flip angle of tip-down pulse for 'ss'. Dflt 15 if [].
 % - pulse_save_period (1,), save pulse every this many outer iters. [] to disable.
 % - pulse_checkpoint_root str, directory for pulse checkpoint saves.
 % - excitation_save_period (1,), save excitation every this many outer iters. [] to disable.
@@ -49,7 +47,7 @@ arg.err_meth = 'l2xy';
 arg.gpuID = 0;
 [arg.doRelax, arg.doQuiet] = deal(true, false);
 arg.sequence_type = 'regular';
-[arg.TR, arg.vTR, arg.alpha, arg.alphaDur] = deal([], [], [], []);
+[arg.TR, arg.alpha] = deal([], []);
 [arg.pulse_save_period, arg.pulse_checkpoint_root] = deal([], '');
 [arg.excitation_save_period, arg.excitation_checkpoint_root] = deal([], '');
 [arg.doClean] = deal(true);

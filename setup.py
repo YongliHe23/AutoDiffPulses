@@ -30,7 +30,7 @@ setup(
     version="0.3.0",
     author="Tianrui Luo, Yongli He",
     author_email="tianrluo@umich.edu, yonglihe@umich.edu",
-    description="A Pytorch based tool for MR pulse design, with support for steady-state and SMS sequence optimization",
+    description="A Pytorch based tool for MR pulse design, with support for steady-state sequence optimization",
     license='MIT',
     long_description=long_description,
     long_description_content_type="text/x-rst",
