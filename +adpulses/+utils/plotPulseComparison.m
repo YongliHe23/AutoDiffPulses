@@ -1,4 +1,4 @@
-function plotPulseComparison(pIni, pAD, dt_us)
+function plotPulseComparison(pIni, pAD, dt_us,labels)
 % PLOTPULSECOMPARISON  Compare initial and optimized mrphy.Pulse objects.
 %
 %   plotPulseComparison(pIni, pAD)
@@ -12,14 +12,20 @@ function plotPulseComparison(pIni, pAD, dt_us)
 %     pAD    - mrphy.Pulse, optimized pulse (same size as pIni)
 %     dt_us  - (optional) dwell time in microseconds for the time axis.
 %               If omitted, the x-axis is sample index.
+%     labels - (optional) array of label strings for the two pulses,
+%               If omitted, labels = ['Initial','Optimized']
 
 nT = size(pIni.rf, 2);
 
+if nargin < 4 || isempty(labels)
+    labels = ["Initial", "Optimized"];
+end
+
 if nargin < 3 || isempty(dt_us)
-    t      = 1:nT;
+    t = 1:nT;
     xlabel_str = 'Sample index';
 else
-    t      = (0:nT-1) * dt_us * 1e-3;  % ms
+    t = (0:nT-1) * dt_us * 1e-3;
     xlabel_str = 'Time (ms)';
 end
 
@@ -40,8 +46,8 @@ figure('Name','Pulse Comparison','NumberTitle','off', ...
 
 %% --- RF Amplitude ---
 subplot(5,1,1);
-plot(t, amp_ini, 'b-',  'DisplayName','Initial');  hold on;
-plot(t, amp_ad,  'r--', 'DisplayName','Optimized');
+plot(t, amp_ini, 'b-',  'DisplayName',labels(1));  hold on;
+plot(t, amp_ad,  'r--', 'DisplayName',labels(2));
 ylabel('|RF| (a.u.)');
 title('RF Amplitude');
 legend('Location','best');
@@ -49,8 +55,8 @@ grid on; xlim([t(1) t(end)]);
 
 %% --- RF Phase ---
 subplot(5,1,2);
-plot(t, phase_ini, 'b-',  'DisplayName','Initial');  hold on;
-plot(t, phase_ad,  'r--', 'DisplayName','Optimized');
+plot(t, phase_ini, 'b-',  'DisplayName',labels(1));  hold on;
+plot(t, phase_ad,  'r--', 'DisplayName',labels(2));
 ylabel('Phase (deg)');
 title('RF Phase');
 legend('Location','best');
@@ -59,8 +65,8 @@ grid on; xlim([t(1) t(end)]);
 %% --- Gradients ---
 for ch = 1:3
     subplot(5,1,2+ch);
-    plot(t, gr_ini(ch,:), 'b-',  'DisplayName','Initial');  hold on;
-    plot(t, gr_ad(ch,:),  'r--', 'DisplayName','Optimized');
+    plot(t, gr_ini(ch,:), 'b-',  'DisplayName',labels(1));  hold on;
+    plot(t, gr_ad(ch,:),  'r--', 'DisplayName',labels(2));
     ylabel('(a.u.)');
     title(chan_labels{ch});
     legend('Location','best');

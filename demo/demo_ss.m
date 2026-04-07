@@ -43,7 +43,8 @@ plot_res(M1_ss,M2_ss,cube,target_ss,'z') %M2_ss is closer to target than M1_ss, 
 % --- Compare regular Bloch Simulation ---
 plot_res(M1,M2,cube,target_OV90,'z') %M1 is closer to target than M2 for regular blochsim
 
-%end
+% --- compare the pulse waveforms --
+adpulses.utils.plotPulseComparison(pAD,pAD_ss,[],["Regular design","Steady-state design"])
 
 % =========================================================================
 function [pAD_ss, optInfo] = OV90_ss(cube, target_ss, pIni, TR, alpha)
