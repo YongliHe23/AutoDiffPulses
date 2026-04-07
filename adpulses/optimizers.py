@@ -54,7 +54,7 @@ def arctanLBFGS(
           defaults to 55e-3 if None.
         - ``vTR``: float, volume TR (s) for SMS EPI. Defaults to 55e-2 if None.
         - ``alpha``: float, flip angle (deg) for tip-down pulse in 'ss'/'sms'.
-          Defaults to 15 if None.
+          Defaults to 0 if None.
         - ``alphaDur``: float, duration (s) of alpha pulse for 'sms'.
           Defaults to 8e-3 if None.
         - ``pulse_save_period``: int, save pulse every this many outer iters.
@@ -72,14 +72,14 @@ def arctanLBFGS(
         if TR is None:
             TR = 55e-3
         if alpha is None:
-            alpha = 15.
+            alpha = 0.
     elif sequence_type == 'sms':
         if TR is None:
             TR = 55e-3
         if vTR is None:
             vTR = 55e-2
         if alpha is None:
-            alpha = 15.
+            alpha = 0.
         if alphaDur is None:
             alphaDur = 8e-3
 
