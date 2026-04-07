@@ -51,7 +51,7 @@ def arctanLBFGS(
         - ``TR``: float, repetition time (s). Required for 'ss';
           defaults to 55e-3 if None.
         - ``alpha``: float, flip angle (deg) for tip-down pulse in 'ss'.
-          Defaults to 15 if None.
+          Defaults to 0 if None.
         - ``pulse_save_period``: int, save pulse every this many outer iters.
         - ``pulse_checkpoint_root``: str or Path, directory for pulse saves.
         - ``excitation_save_period``: int, save Mr_ every this many outer iters.
@@ -67,7 +67,7 @@ def arctanLBFGS(
         if TR is None:
             TR = 55e-3
         if alpha is None:
-            alpha = 15.
+            alpha = 0.
 
     if pulse_save_period is not None:
         pulse_checkpoint_root = Path(pulse_checkpoint_root)
